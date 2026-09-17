@@ -631,12 +631,15 @@ document.getElementById('emailBtn').addEventListener('click', async () => {
   const errorBox = document.getElementById('errorBox');
   errorBox.textContent = '';
   btn.disabled = true;
-  document.getElementById('emailPanel').style.display = 'block';
+  const emailPanel = document.getElementById('emailPanel');
+  emailPanel.style.display = 'block';
   document.getElementById('emailBox').textContent = 'Drafting email…';
+  emailPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   try {
     const emailText = await callDraftEmail(lastNote);
     document.getElementById('emailBox').textContent = emailText.trim();
+    emailPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (err) {
     errorBox.textContent = 'Could not draft email: ' + err.message;
     document.getElementById('emailBox').textContent = 'Draft failed — click "Draft email" to retry.';
