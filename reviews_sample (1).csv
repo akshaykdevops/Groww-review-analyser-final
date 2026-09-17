@@ -1,0 +1,117 @@
+date,platform,rating,title,text,theme_hint
+2026-06-22,App Store,2,Waiting days for approval,"Still waiting on KYC approval a week later, can't use half the app features until it clears.",KYC
+2026-06-22,App Store,1,Payment failed but money deducted,"My payment failed but the amount was deducted from my account, still waiting for a refund three days later.",Payments
+2026-06-22,Play Store,5,Easy to get started,"Loved how the app walked me through each step with simple tooltips, very beginner friendly.",Onboarding
+2026-06-22,Play Store,2,Statement takes forever to load,"Statements take almost a minute to load every time, feels like it's fetching from scratch.",Statements
+2026-06-23,Play Store,2,Document upload keeps failing,"The document scanner kept rejecting my ID even in good lighting, had to try eight times.",KYC
+2026-06-24,App Store,5,Loved the intro tutorial,First time using the app and the welcome tutorial made everything click right away.,Onboarding
+2026-06-24,App Store,5,Smooth identity check,"The live selfie check worked perfectly on the first try, nice and smooth process.",KYC
+2026-06-24,App Store,2,Withdrawal limit too low,The daily withdrawal limit is too restrictive for anyone trying to move a larger amount at once.,Withdrawals
+2026-06-26,App Store,5,Smooth identity check,"The live selfie check worked perfectly on the first try, nice and smooth process.",KYC
+2026-06-27,Play Store,5,Love the instant transfers,"Sending money to friends is so easy now, the whole flow takes less than thirty seconds.",Payments
+2026-06-27,Play Store,4,Clean statement layout,"The new statement layout is clean and easy to read, categorization of expenses is a nice touch.",Statements
+2026-06-28,Play Store,2,Stuck on account setup,"I got stuck on the phone number verification screen for almost 20 minutes, had to restart the app twice.",Onboarding
+2026-06-29,App Store,1,Signup was confusing,The signup process asked for the same information twice and the app crashed when I tried to upload my ID photo.,Onboarding
+2026-06-30,Play Store,2,UPI keeps timing out,"UPI payments keep timing out during peak hours, tried four times before it finally went through.",Payments
+2026-06-30,App Store,1,Statement download not working,"I can't download my monthly statement as PDF, the export button just spins forever.",Statements
+2026-07-01,Play Store,4,Smooth cash out process,"Cashing out was simple and the funds cleared overnight, no complaints here.",Withdrawals
+2026-07-01,App Store,2,Waiting days for approval,"Still waiting on KYC approval a week later, can't use half the app features until it clears.",KYC
+2026-07-01,App Store,5,Easy to get started,"Loved how the app walked me through each step with simple tooltips, very beginner friendly.",Onboarding
+2026-07-01,App Store,4,Smooth cash out process,"Cashing out was simple and the funds cleared overnight, no complaints here.",Withdrawals
+2026-07-02,Play Store,1,KYC rejected with no reason,"My KYC got rejected but the app never explained why, very frustrating experience.",KYC
+2026-07-03,App Store,5,Fast and reliable payments,"Transfers are instant and the confirmation notifications come through right away, works great.",Payments
+2026-07-04,Play Store,5,Smooth identity check,"The live selfie check worked perfectly on the first try, nice and smooth process.",KYC
+2026-07-05,App Store,1,Statement download not working,"I can't download my monthly statement as PDF, the export button just spins forever.",Statements
+2026-07-09,Play Store,5,Great payment experience,Really impressed with how fast bill payments are processed compared to other apps I've used.,Payments
+2026-07-10,Play Store,5,Easy to export statements,Exporting statements for tax filing was straightforward and the CSV format is well organized.,Statements
+2026-07-10,Play Store,2,Document upload keeps failing,"The document scanner kept rejecting my ID even in good lighting, had to try eight times.",KYC
+2026-07-11,Play Store,2,Document upload keeps failing,"The document scanner kept rejecting my ID even in good lighting, had to try eight times.",KYC
+2026-07-11,Play Store,1,Statement download not working,"I can't download my monthly statement as PDF, the export button just spins forever.",Statements
+2026-07-12,App Store,1,Signup was confusing,The signup process asked for the same information twice and the app crashed when I tried to upload my ID photo.,Onboarding
+2026-07-12,Play Store,4,Great first experience,"Setting up my account took less than five minutes, the steps were clear and well explained.",Onboarding
+2026-07-12,App Store,1,Transaction stuck in pending,"A transaction has been stuck in pending status for two days now, no explanation given.",Payments
+2026-07-13,App Store,5,Great payment experience,Really impressed with how fast bill payments are processed compared to other apps I've used.,Payments
+2026-07-13,App Store,5,Smooth identity check,"The live selfie check worked perfectly on the first try, nice and smooth process.",KYC
+2026-07-14,App Store,2,High withdrawal fees,"The withdrawal fee is way higher than what was advertised on the pricing page, feels misleading.",Withdrawals
+2026-07-16,App Store,5,Verified in minutes,"Identity verification was surprisingly quick, uploaded my documents and got approved within an hour.",KYC
+2026-07-16,App Store,5,Smooth identity check,"The live selfie check worked perfectly on the first try, nice and smooth process.",KYC
+2026-07-17,App Store,5,Quick withdrawal to bank,"Withdrew funds to my bank account and it landed within an hour, better than expected.",Withdrawals
+2026-07-17,App Store,4,Great first experience,"Setting up my account took less than five minutes, the steps were clear and well explained.",Onboarding
+2026-07-17,App Store,5,Easy to get started,"Loved how the app walked me through each step with simple tooltips, very beginner friendly.",Onboarding
+2026-07-18,Play Store,5,Love the instant transfers,"Sending money to friends is so easy now, the whole flow takes less than thirty seconds.",Payments
+2026-07-18,App Store,1,Withdrawal failed silently,My withdrawal request just disappeared with no error message and no funds in my account.,Withdrawals
+2026-07-19,App Store,2,High withdrawal fees,"The withdrawal fee is way higher than what was advertised on the pricing page, feels misleading.",Withdrawals
+2026-07-19,App Store,1,Statement download not working,"I can't download my monthly statement as PDF, the export button just spins forever.",Statements
+2026-07-20,App Store,5,Nice monthly summary,The monthly summary view with spending charts is genuinely useful for tracking my budget.,Statements
+2026-07-22,App Store,1,KYC verification stuck,"My KYC has been pending for four days now with no update, support hasn't responded either.",KYC
+2026-07-22,Play Store,4,Great first experience,"Setting up my account took less than five minutes, the steps were clear and well explained.",Onboarding
+2026-07-23,App Store,1,Transaction stuck in pending,"A transaction has been stuck in pending status for two days now, no explanation given.",Payments
+2026-07-23,App Store,1,KYC rejected with no reason,"My KYC got rejected but the app never explained why, very frustrating experience.",KYC
+2026-07-24,App Store,5,Fast and reliable payments,"Transfers are instant and the confirmation notifications come through right away, works great.",Payments
+2026-07-25,Play Store,2,Waiting days for approval,"Still waiting on KYC approval a week later, can't use half the app features until it clears.",KYC
+2026-07-25,App Store,5,Loved the intro tutorial,First time using the app and the welcome tutorial made everything click right away.,Onboarding
+2026-07-25,Play Store,2,Document upload keeps failing,"The document scanner kept rejecting my ID even in good lighting, had to try eight times.",KYC
+2026-07-25,Play Store,1,Signup was confusing,The signup process asked for the same information twice and the app crashed when I tried to upload my ID photo.,Onboarding
+2026-07-26,Play Store,1,KYC verification stuck,"My KYC has been pending for four days now with no update, support hasn't responded either.",KYC
+2026-07-26,Play Store,1,KYC rejected with no reason,"My KYC got rejected but the app never explained why, very frustrating experience.",KYC
+2026-07-27,App Store,1,Transaction stuck in pending,"A transaction has been stuck in pending status for two days now, no explanation given.",Payments
+2026-07-28,App Store,1,Statement download not working,"I can't download my monthly statement as PDF, the export button just spins forever.",Statements
+2026-07-28,Play Store,5,Easy to get started,"Loved how the app walked me through each step with simple tooltips, very beginner friendly.",Onboarding
+2026-07-28,App Store,5,Easy to get started,"Loved how the app walked me through each step with simple tooltips, very beginner friendly.",Onboarding
+2026-07-28,Play Store,5,Quick withdrawal to bank,"Withdrew funds to my bank account and it landed within an hour, better than expected.",Withdrawals
+2026-07-30,App Store,5,Quick withdrawal to bank,"Withdrew funds to my bank account and it landed within an hour, better than expected.",Withdrawals
+2026-08-01,Play Store,2,Waiting days for approval,"Still waiting on KYC approval a week later, can't use half the app features until it clears.",KYC
+2026-08-02,App Store,1,Transaction stuck in pending,"A transaction has been stuck in pending status for two days now, no explanation given.",Payments
+2026-08-02,Play Store,5,Fast and reliable payments,"Transfers are instant and the confirmation notifications come through right away, works great.",Payments
+2026-08-02,Play Store,2,High withdrawal fees,"The withdrawal fee is way higher than what was advertised on the pricing page, feels misleading.",Withdrawals
+2026-08-03,App Store,4,Great first experience,"Setting up my account took less than five minutes, the steps were clear and well explained.",Onboarding
+2026-08-03,Play Store,1,Statement download not working,"I can't download my monthly statement as PDF, the export button just spins forever.",Statements
+2026-08-04,App Store,1,Transaction stuck in pending,"A transaction has been stuck in pending status for two days now, no explanation given.",Payments
+2026-08-04,App Store,1,Transaction stuck in pending,"A transaction has been stuck in pending status for two days now, no explanation given.",Payments
+2026-08-08,App Store,1,Signup was confusing,The signup process asked for the same information twice and the app crashed when I tried to upload my ID photo.,Onboarding
+2026-08-08,Play Store,5,Great payment experience,Really impressed with how fast bill payments are processed compared to other apps I've used.,Payments
+2026-08-08,Play Store,5,Quick withdrawal to bank,"Withdrew funds to my bank account and it landed within an hour, better than expected.",Withdrawals
+2026-08-09,App Store,1,Withdrawal pending for days,"Requested a withdrawal five days ago and it's still showing as processing, support says wait 24 more hours.",Withdrawals
+2026-08-10,Play Store,1,Payment failed but money deducted,"My payment failed but the amount was deducted from my account, still waiting for a refund three days later.",Payments
+2026-08-10,App Store,1,Transaction stuck in pending,"A transaction has been stuck in pending status for two days now, no explanation given.",Payments
+2026-08-11,Play Store,1,Withdrawal pending for days,"Requested a withdrawal five days ago and it's still showing as processing, support says wait 24 more hours.",Withdrawals
+2026-08-12,App Store,1,Transaction stuck in pending,"A transaction has been stuck in pending status for two days now, no explanation given.",Payments
+2026-08-12,App Store,2,Statement takes forever to load,"Statements take almost a minute to load every time, feels like it's fetching from scratch.",Statements
+2026-08-14,App Store,5,Love the instant transfers,"Sending money to friends is so easy now, the whole flow takes less than thirty seconds.",Payments
+2026-08-15,Play Store,2,Document upload keeps failing,"The document scanner kept rejecting my ID even in good lighting, had to try eight times.",KYC
+2026-08-16,Play Store,1,KYC rejected with no reason,"My KYC got rejected but the app never explained why, very frustrating experience.",KYC
+2026-08-18,Play Store,5,Smooth identity check,"The live selfie check worked perfectly on the first try, nice and smooth process.",KYC
+2026-08-18,Play Store,2,Missing transactions in statement,"Several transactions from last month are missing from my statement, had to check my bank separately.",Statements
+2026-08-21,App Store,5,Great payment experience,Really impressed with how fast bill payments are processed compared to other apps I've used.,Payments
+2026-08-22,App Store,1,KYC verification stuck,"My KYC has been pending for four days now with no update, support hasn't responded either.",KYC
+2026-08-23,Play Store,2,Waiting days for approval,"Still waiting on KYC approval a week later, can't use half the app features until it clears.",KYC
+2026-08-23,App Store,2,UPI keeps timing out,"UPI payments keep timing out during peak hours, tried four times before it finally went through.",Payments
+2026-08-23,Play Store,5,Easy to get started,"Loved how the app walked me through each step with simple tooltips, very beginner friendly.",Onboarding
+2026-08-23,App Store,2,Stuck on account setup,"I got stuck on the phone number verification screen for almost 20 minutes, had to restart the app twice.",Onboarding
+2026-08-24,Play Store,5,Nice monthly summary,The monthly summary view with spending charts is genuinely useful for tracking my budget.,Statements
+2026-08-25,App Store,5,Loved the intro tutorial,First time using the app and the welcome tutorial made everything click right away.,Onboarding
+2026-08-26,Play Store,1,Payment failed but money deducted,"My payment failed but the amount was deducted from my account, still waiting for a refund three days later.",Payments
+2026-08-26,App Store,1,Withdrawal pending for days,"Requested a withdrawal five days ago and it's still showing as processing, support says wait 24 more hours.",Withdrawals
+2026-08-28,App Store,2,Withdrawal limit too low,The daily withdrawal limit is too restrictive for anyone trying to move a larger amount at once.,Withdrawals
+2026-08-28,App Store,4,Smooth cash out process,"Cashing out was simple and the funds cleared overnight, no complaints here.",Withdrawals
+2026-08-30,App Store,5,Quick withdrawal to bank,"Withdrew funds to my bank account and it landed within an hour, better than expected.",Withdrawals
+2026-08-31,Play Store,2,Waiting days for approval,"Still waiting on KYC approval a week later, can't use half the app features until it clears.",KYC
+2026-09-01,Play Store,1,Withdrawal pending for days,"Requested a withdrawal five days ago and it's still showing as processing, support says wait 24 more hours.",Withdrawals
+2026-09-01,App Store,4,Smooth cash out process,"Cashing out was simple and the funds cleared overnight, no complaints here.",Withdrawals
+2026-09-01,App Store,5,Quick withdrawal to bank,"Withdrew funds to my bank account and it landed within an hour, better than expected.",Withdrawals
+2026-09-02,Play Store,4,Smooth cash out process,"Cashing out was simple and the funds cleared overnight, no complaints here.",Withdrawals
+2026-09-02,Play Store,5,Easy to export statements,Exporting statements for tax filing was straightforward and the CSV format is well organized.,Statements
+2026-09-02,Play Store,2,High withdrawal fees,"The withdrawal fee is way higher than what was advertised on the pricing page, feels misleading.",Withdrawals
+2026-09-06,App Store,4,Smooth cash out process,"Cashing out was simple and the funds cleared overnight, no complaints here.",Withdrawals
+2026-09-07,App Store,5,Easy to get started,"Loved how the app walked me through each step with simple tooltips, very beginner friendly.",Onboarding
+2026-09-08,Play Store,2,Stuck on account setup,"I got stuck on the phone number verification screen for almost 20 minutes, had to restart the app twice.",Onboarding
+2026-09-08,Play Store,1,Transaction stuck in pending,"A transaction has been stuck in pending status for two days now, no explanation given.",Payments
+2026-09-09,App Store,2,Withdrawal limit too low,The daily withdrawal limit is too restrictive for anyone trying to move a larger amount at once.,Withdrawals
+2026-09-10,Play Store,2,Onboarding flow needs work,"The onboarding forms are way too long, I gave up after the third screen asking for personal details.",Onboarding
+2026-09-10,App Store,2,Missing transactions in statement,"Several transactions from last month are missing from my statement, had to check my bank separately.",Statements
+2026-09-10,Play Store,2,Missing transactions in statement,"Several transactions from last month are missing from my statement, had to check my bank separately.",Statements
+2026-09-10,Play Store,5,Fast and reliable payments,"Transfers are instant and the confirmation notifications come through right away, works great.",Payments
+2026-09-11,Play Store,2,Missing transactions in statement,"Several transactions from last month are missing from my statement, had to check my bank separately.",Statements
+2026-09-11,Play Store,4,Clean statement layout,"The new statement layout is clean and easy to read, categorization of expenses is a nice touch.",Statements
+2026-09-12,Play Store,1,KYC verification stuck,"My KYC has been pending for four days now with no update, support hasn't responded either.",KYC
+2026-09-13,App Store,5,Love the instant transfers,"Sending money to friends is so easy now, the whole flow takes less than thirty seconds.",Payments

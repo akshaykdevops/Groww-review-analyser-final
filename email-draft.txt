@@ -1,0 +1,24 @@
+To: me@company.com
+Subject: Weekly App Review Pulse — Week of Sep 7–13, 2026
+
+Hi,
+
+Here's this week's app review pulse — 12 App Store/Play Store reviews analyzed.
+
+TOP 3 THEMES
+1. Statements (4 reviews, 3 negative) — missing transactions and slow/failed exports, up from the usual 1–2/week.
+2. Onboarding (3 reviews, 2 negative) — OTP/phone verification stalling new users; signup form seen as too long.
+3. Payments (3 reviews, 1 negative) — mostly positive on speed, one report of a payment stuck "pending" with no visibility.
+
+USER QUOTES
+- "I can't download my monthly statement as PDF, the export button just spins forever." (Statements, 1★)
+- "I got stuck on the phone number verification screen for almost 20 minutes, had to restart the app twice." (Onboarding, 2★)
+- "A transaction has been stuck in pending status for two days now, no explanation given." (Payments, 1★)
+
+ACTION IDEAS
+1. Audit the statement export pipeline for dropped transactions; add a reconciliation check pre-export.
+2. Add a progress indicator + auto-retry/resend on the OTP screen, with a fallback verification path.
+3. Surface a status/ETA banner for pending payments and auto-trigger refund/retry past a set threshold.
+
+Full note attached / linked below.
+— Weekly Pulse Bot
