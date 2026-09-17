@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Groww Reviews Analyser</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --ink:#EFF3EC;
+    --panel:#FFFFFF;
+    --panel-2:#E4EEE1;
+    --line:#C4D0C1;
+    --line-strong:#33422F;
+    --text:#1C2A1E;
+    --muted:#5E6E5B;
+    --signal:#1F7A4C;
+    --alert:#AA3A2C;
+    --amber:#96701F;
+    --wire:#8FA089;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    background-image:
+      linear-gradient(var(--panel-2) 1px, transparent 1px);
+    background-size: 100% 46px;
+    color:var(--text);
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:14.5px;
+    line-height:1.55;
+    padding:32px 28px;
+  }
+  h1,h2,h3{font-family:'Source Serif 4',serif; margin:0; font-weight:600;}
+  .app{max-width:1180px; margin:0 auto;}
+
+  /* header — statement letterhead */
+  .masthead{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    padding-bottom:14px; margin-bottom:26px;
+    border-bottom:3px solid var(--line-strong);
+  }
+  .masthead::after{ content:''; }
+  .masthead-inner-rule{ border-bottom:1px solid var(--line-strong); margin-top:4px; }
+  .masthead h1{font-size:27px; letter-spacing:-0.01em; font-weight:700;}
+  .masthead .tick{
+    display:inline-block; width:9px; height:9px; background:var(--signal);
+    border-radius:50%; margin-right:10px; position:relative; top:-2px;
+    box-shadow:0 0 0 4px rgba(31,122,76,0.14);
+  }
+  .masthead .sub{
+    color:var(--muted); font-size:12.5px; font-family:'IBM Plex Mono',monospace;
+    text-align:right;
+  }
+  .masthead .sub .label{display:block; color:var(--wire); font-size:10.5px; letter-spacing:0.04em; margin-bottom:2px;}
+  @media (max-width:640px){
+    .masthead{flex-direction:column; align-items:flex-start; gap:12px;}
+    .masthead .sub{text-align:left;}
+    .masthead h1{font-size:22px;}
+  }
+
+  /* layout */
+  .grid{display:grid; grid-template-columns:280px 1fr; gap:28px;}
+  @media (max-width:860px){ .grid{grid-template-columns:1fr;} }
+
+  .rail{border-right:1px solid var(--line); padding-right:24px;}
+  .block{margin-bottom:24px;}
+  .block h3{
+    font-size:11.5px; letter-spacing:0.03em; color:var(--muted); margin-bottom:10px;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-style:normal;
+    border-bottom:1px dotted var(--line); padding-bottom:6px;
+  }
+
+  .dropzone{
+    display:block; width:100%; border:1px dashed var(--wire); border-radius:2px;
+    padding:14px; text-align:left; color:var(--muted); font-size:12.5px; cursor:pointer;
+    transition:border-color .15s, background .15s; line-height:1.5; background:var(--panel);
+  }
+  .dropzone:hover{border-color:var(--signal); color:var(--text); background:#F1F7EF;}
+  .dropzone input{display:none;}
+  .filebar{margin-top:9px; font-size:11.5px; font-family:'IBM Plex Mono',monospace; color:var(--signal);}
+
+  .btn{
+    background:var(--signal); color:#F5F8F2; border:none; border-radius:2px;
+    padding:10px 16px; font-family:'IBM Plex Sans',sans-serif; font-weight:600;
+    font-size:13px; cursor:pointer; width:100%; margin-top:6px; letter-spacing:0.01em;
+  }
+  .btn:hover:not(:disabled){background:#195F3B;}
+  .btn:disabled{background:#D7DED4; color:var(--muted); cursor:not-allowed;}
+  .btn.secondary{background:transparent; border:1px solid var(--wire); color:var(--text);}
+  .btn.secondary:hover:not(:disabled){border-color:var(--line-strong); background:var(--panel-2);}
+  .btn.small{width:auto; padding:7px 12px; font-size:12px;}
+  .btn:focus-visible, .dropzone:focus-within{outline:2px solid var(--signal); outline-offset:2px;}
+
+  .legend-row{display:flex; align-items:center; gap:8px; font-size:12px; padding:5px 0; color:var(--muted);}
+  .dot{width:8px; height:8px; border-radius:50%; flex-shrink:0;}
+
+  .stat-line{display:flex; justify-content:space-between; font-size:12px; padding:4px 0; color:var(--muted); font-family:'IBM Plex Mono',monospace; border-bottom:1px dotted var(--line);}
+  .stat-line b{color:var(--text); font-weight:600;}
+
+  /* main */
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:2px; padding:20px; margin-bottom:20px;}
+  .panel-title{font-size:11.5px; letter-spacing:0.03em; color:var(--muted); font-family:'IBM Plex Mono',monospace; margin-bottom:4px; font-weight:600;}
+  .panel-rule{border-bottom:1px solid var(--line); margin-bottom:14px;}
+
+  /* ledger table of themes, in place of a card grid */
+  .ledger-head{
+    display:grid; grid-template-columns:1.3fr 0.7fr 1.4fr 2fr; gap:14px; align-items:center;
+    padding:0 10px 8px; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    color:var(--wire); letter-spacing:0.03em; border-bottom:1px solid var(--line-strong);
+  }
+  .themes-strip{display:flex; flex-direction:column;}
+  .theme-card{
+    display:grid; grid-template-columns:1.3fr 0.7fr 1.4fr 2fr; gap:14px; align-items:center;
+    padding:11px 10px; border-bottom:1px solid var(--line);
+  }
+  .theme-card:nth-child(even){background:var(--panel-2);}
+  .theme-card .name{font-family:'Source Serif 4',serif; font-size:14.5px; font-weight:600;}
+  .theme-card .count{font-family:'IBM Plex Mono',monospace; font-size:19px; color:var(--text); font-weight:600; font-variant-numeric:tabular-nums;}
+  .theme-card .neg{font-size:11.5px; color:var(--alert); font-family:'IBM Plex Mono',monospace;}
+  .spark{display:flex; align-items:flex-end; gap:2px; height:22px;}
+  .spark div{flex:1; background:var(--wire); border-radius:0.5px;}
+
+  /* memo — statement slip with a torn top edge */
+  .memo{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:2px; padding:26px 26px 20px; font-family:'IBM Plex Sans',sans-serif;
+    position:relative; overflow:hidden;
+  }
+  .memo::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:6px;
+    background-image: radial-gradient(circle, var(--ink) 3.2px, transparent 3.2px);
+    background-size: 16px 6px; background-position: 8px 0;
+  }
+  .memo h2{font-size:20px; margin:8px 0 3px; font-weight:700;}
+  .memo .meta{color:var(--muted); font-size:12px; font-family:'IBM Plex Mono',monospace; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid var(--line);}
+  .memo h4{font-size:11px; letter-spacing:0.03em; color:var(--amber); margin:18px 0 8px; font-family:'IBM Plex Mono',monospace; font-weight:600;}
+  .memo ol,.memo ul{margin:0; padding-left:20px;}
+  .memo li{margin-bottom:7px;}
+  .memo blockquote{
+    margin:0 0 8px 0; padding:8px 0 8px 14px; border-left:2px solid var(--wire);
+    color:var(--text); font-family:'Source Serif 4',serif; font-style:italic; font-size:14px;
+  }
+  .memo .quote-meta{color:var(--muted); font-size:11px; font-style:normal; font-family:'IBM Plex Mono',monospace;}
+  .wordcount, .stamp{
+    margin-top:16px; text-align:right; font-size:10.5px; color:var(--signal);
+    font-family:'IBM Plex Mono',monospace; font-weight:600;
+  }
+  .stamp span{
+    display:inline-block; border:1.5px solid var(--signal); border-radius:50%;
+    padding:5px 10px; transform:rotate(-6deg); letter-spacing:0.03em;
+    animation: stamp-down .28s ease-out;
+  }
+  @keyframes stamp-down{ from{ transform:rotate(-6deg) scale(1.6); opacity:0; } to{ transform:rotate(-6deg) scale(1); opacity:1; } }
+  @media (prefers-reduced-motion: reduce){ .stamp span{ animation:none; } }
+
+  .email-box{
+    background:var(--panel-2); border:1px solid var(--line); border-radius:2px;
+    padding:20px; font-family:'IBM Plex Mono',monospace; font-size:12.5px; white-space:pre-wrap;
+    color:var(--text); line-height:1.65; position:relative;
+  }
+  .email-box::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:0;
+    border-top:1px dashed var(--wire);
+  }
+  .email-actions{display:flex; gap:10px; margin-top:12px; align-items:center;}
+
+  .empty{color:var(--muted); font-size:13px; padding:30px 0; text-align:center; font-family:'Source Serif 4',serif; font-style:italic;}
+  .loading{color:var(--signal); font-size:13px; font-family:'IBM Plex Mono',monospace;}
+  .error{color:var(--alert); font-size:12px; margin-top:8px; font-family:'IBM Plex Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="masthead">
+    <div>
+      <h1><span class="tick"></span>Groww Reviews Analyser</h1>
+    </div>
+    <div style="display:flex; align-items:flex-end; gap:18px;">
+      <button class="btn secondary small" id="docsBtn" type="button">Documentation</button>
+      <div class="sub"><span class="label">Statement period</span><span id="rangeLabel">no data loaded</span></div>
+    </div>
+  </div>
+  <div class="masthead-inner-rule"></div>
+
+  <div id="docsOverlay" style="display:none; position:fixed; inset:0; background:rgba(14,17,22,0.75); z-index:50; padding:40px 20px; overflow-y:auto;">
+    <div style="max-width:680px; margin:0 auto; background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:28px 32px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+        <h2 style="font-size:20px;">How to use the Groww Reviews Analyser</h2>
+        <button class="btn secondary small" id="docsCloseBtn" type="button">Close</button>
+      </div>
+      <div class="sub" style="margin-bottom:18px;">A one-page weekly pulse from your App Store + Play Store reviews.</div>
+
+      <h4 style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.03em; color:var(--amber); margin:18px 0 8px; font-weight:600; border-bottom:1px dotted var(--line); padding-bottom:5px;">1 · Export your reviews</h4>
+      <p style="margin:0 0 6px; color:var(--text); font-size:13.5px;">Pull your latest App Store / Play Store review export (public review data only — no scraping behind logins) as a CSV.</p>
+      <p style="margin:0 0 6px; color:var(--muted); font-size:13px;">Required columns, in any order, with these exact header names: <b style="color:var(--text)">date, platform, rating, title, text</b>. Dates can be <code>YYYY-MM-DD</code>, <code>MM/DD/YYYY</code>, or <code>DD/MM/YYYY</code> — the tool normalizes them. Extra columns are fine and ignored. Do not include usernames, emails, or reviewer IDs.</p>
+
+      <h4 style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.03em; color:var(--amber); margin:18px 0 8px; font-weight:600; border-bottom:1px dotted var(--line); padding-bottom:5px;">2 · Upload the CSV</h4>
+      <p style="margin:0 0 6px; color:var(--text); font-size:13.5px;">Click the upload box on the left, or use "Reload sample data" to go back to the bundled example. The tool keeps the most recent 8–12 weeks and drops anything older.</p>
+
+      <h4 style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.03em; color:var(--amber); margin:18px 0 8px; font-weight:600; border-bottom:1px dotted var(--line); padding-bottom:5px;">3 · Review the themes</h4>
+      <p style="margin:0 0 6px; color:var(--text); font-size:13.5px;">Each review is bucketed into one of five themes by keyword match, with a 12-week trend sparkline per theme.</p>
+      <div class="legend-row"><span class="dot" style="background:#2F6F9E"></span>Onboarding — signup, verification, first run</div>
+      <div class="legend-row"><span class="dot" style="background:#7C5CAD"></span>KYC — identity docs, approval delays</div>
+      <div class="legend-row"><span class="dot" style="background:#B98A2E"></span>Payments — transfers, UPI, failures</div>
+      <div class="legend-row"><span class="dot" style="background:#3F8677"></span>Statements — history, exports, PDFs</div>
+      <div class="legend-row"><span class="dot" style="background:#AA3A2C"></span>Withdrawals — payouts, limits, fees</div>
+      <p style="margin:6px 0 0; color:var(--muted); font-size:12.5px;">Reviews that don't clearly match a theme are grouped as "Other" and excluded from the weekly note.</p>
+
+      <h4 style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.03em; color:var(--amber); margin:18px 0 8px; font-weight:600; border-bottom:1px dotted var(--line); padding-bottom:5px;">4 · Generate the note</h4>
+      <p style="margin:0 0 6px; color:var(--text); font-size:13.5px;">Click "Generate weekly note" to pick the top 3 themes, select 3 representative quotes, and write 3 action ideas — capped at 250 words, no PII.</p>
+
+      <h4 style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.03em; color:var(--amber); margin:18px 0 8px; font-weight:600; border-bottom:1px dotted var(--line); padding-bottom:5px;">5 · Draft the email</h4>
+      <p style="margin:0 0 6px; color:var(--text); font-size:13.5px;">Click "Draft email" to turn the note into a ready-to-send email. Copy it into your mail client — this tool does not send email itself.</p>
+
+      <h4 style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.03em; color:var(--amber); margin:18px 0 8px; font-weight:600; border-bottom:1px dotted var(--line); padding-bottom:5px;">Constraints this tool follows</h4>
+      <p style="margin:0; color:var(--muted); font-size:12.5px;">Only public review exports · max 5 themes · note capped at ≤250 words · no usernames, emails, or reviewer IDs in any output.</p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="rail">
+      <div class="block">
+        <h3>1 · Import</h3>
+        <label class="dropzone" for="fileInput">
+          Click to upload a CSV<br>(date, platform, rating, title, text)
+          <input type="file" id="fileInput" accept=".csv">
+        </label>
+        <div class="filebar" id="fileStatus">Using bundled sample data (116 reviews, 12 weeks)</div>
+        <button class="btn secondary" id="reloadSampleBtn" style="margin-top:10px;">Reload sample data</button>
+      </div>
+
+      <div class="block">
+        <h3>2 · Theme legend (max 5)</h3>
+        <div class="legend-row"><span class="dot" style="background:#2F6F9E"></span>Onboarding — signup, verification, first run</div>
+        <div class="legend-row"><span class="dot" style="background:#7C5CAD"></span>KYC — identity docs, approval delays</div>
+        <div class="legend-row"><span class="dot" style="background:#B98A2E"></span>Payments — transfers, UPI, failures</div>
+        <div class="legend-row"><span class="dot" style="background:#3F8677"></span>Statements — history, exports, PDFs</div>
+        <div class="legend-row"><span class="dot" style="background:#AA3A2C"></span>Withdrawals — payouts, limits, fees</div>
+      </div>
+
+      <div class="block">
+        <h3>3 · Window</h3>
+        <div class="stat-line"><span>Reviews loaded</span><b id="statTotal">—</b></div>
+        <div class="stat-line"><span>Weeks covered</span><b id="statWeeks">—</b></div>
+        <div class="stat-line"><span>Latest week</span><b id="statLatest">—</b></div>
+        <div class="stat-line"><span>Avg rating (latest wk)</span><b id="statAvg">—</b></div>
+      </div>
+
+      <div class="block">
+        <button class="btn" id="generateBtn">Generate weekly note</button>
+        <button class="btn secondary" id="emailBtn" style="margin-top:8px;" disabled>Draft email</button>
+        <div class="error" id="errorBox"></div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="panel">
+        <div class="panel-title">12-week theme volume</div>
+        <div class="panel-rule"></div>
+        <div class="ledger-head"><div>Theme</div><div>This week</div><div>Alerts</div><div>12-week trend</div></div>
+        <div class="themes-strip" id="themesStrip"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Weekly one-page note</div>
+        <div class="panel-rule"></div>
+        <div id="noteArea"><div class="empty">Click "Generate weekly note" to summarize the latest week.</div></div>
+      </div>
+
+      <div class="panel" id="emailPanel" style="display:none;">
+        <div class="panel-title">Email draft</div>
+        <div class="panel-rule"></div>
+        <div class="email-box" id="emailBox"></div>
+        <div class="email-actions">
+          <button class="btn small" id="copyEmailBtn">Copy to clipboard</button>
+          <span class="filebar" id="copyStatus"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SAMPLE_DATA = [{"date": "2026-06-22", "platform": "App Store", "rating": 2, "title": "Waiting days for approval", "text": "Still waiting on KYC approval a week later, can't use half the app features until it clears."}, {"date": "2026-06-22", "platform": "App Store", "rating": 1, "title": "Payment failed but money deducted", "text": "My payment failed but the amount was deducted from my account, still waiting for a refund three days later."}, {"date": "2026-06-22", "platform": "Play Store", "rating": 5, "title": "Easy to get started", "text": "Loved how the app walked me through each step with simple tooltips, very beginner friendly."}, {"date": "2026-06-22", "platform": "Play Store", "rating": 2, "title": "Statement takes forever to load", "text": "Statements take almost a minute to load every time, feels like it's fetching from scratch."}, {"date": "2026-06-23", "platform": "Play Store", "rating": 2, "title": "Document upload keeps failing", "text": "The document scanner kept rejecting my ID even in good lighting, had to try eight times."}, {"date": "2026-06-24", "platform": "App Store", "rating": 5, "title": "Loved the intro tutorial", "text": "First time using the app and the welcome tutorial made everything click right away."}, {"date": "2026-06-24", "platform": "App Store", "rating": 5, "title": "Smooth identity check", "text": "The live selfie check worked perfectly on the first try, nice and smooth process."}, {"date": "2026-06-24", "platform": "App Store", "rating": 2, "title": "Withdrawal limit too low", "text": "The daily withdrawal limit is too restrictive for anyone trying to move a larger amount at once."}, {"date": "2026-06-26", "platform": "App Store", "rating": 5, "title": "Smooth identity check", "text": "The live selfie check worked perfectly on the first try, nice and smooth process."}, {"date": "2026-06-27", "platform": "Play Store", "rating": 5, "title": "Love the instant transfers", "text": "Sending money to friends is so easy now, the whole flow takes less than thirty seconds."}, {"date": "2026-06-27", "platform": "Play Store", "rating": 4, "title": "Clean statement layout", "text": "The new statement layout is clean and easy to read, categorization of expenses is a nice touch."}, {"date": "2026-06-28", "platform": "Play Store", "rating": 2, "title": "Stuck on account setup", "text": "I got stuck on the phone number verification screen for almost 20 minutes, had to restart the app twice."}, {"date": "2026-06-29", "platform": "App Store", "rating": 1, "title": "Signup was confusing", "text": "The signup process asked for the same information twice and the app crashed when I tried to upload my ID photo."}, {"date": "2026-06-30", "platform": "Play Store", "rating": 2, "title": "UPI keeps timing out", "text": "UPI payments keep timing out during peak hours, tried four times before it finally went through."}, {"date": "2026-06-30", "platform": "App Store", "rating": 1, "title": "Statement download not working", "text": "I can't download my monthly statement as PDF, the export button just spins forever."}, {"date": "2026-07-01", "platform": "Play Store", "rating": 4, "title": "Smooth cash out process", "text": "Cashing out was simple and the funds cleared overnight, no complaints here."}, {"date": "2026-07-01", "platform": "App Store", "rating": 2, "title": "Waiting days for approval", "text": "Still waiting on KYC approval a week later, can't use half the app features until it clears."}, {"date": "2026-07-01", "platform": "App Store", "rating": 5, "title": "Easy to get started", "text": "Loved how the app walked me through each step with simple tooltips, very beginner friendly."}, {"date": "2026-07-01", "platform": "App Store", "rating": 4, "title": "Smooth cash out process", "text": "Cashing out was simple and the funds cleared overnight, no complaints here."}, {"date": "2026-07-02", "platform": "Play Store", "rating": 1, "title": "KYC rejected with no reason", "text": "My KYC got rejected but the app never explained why, very frustrating experience."}, {"date": "2026-07-03", "platform": "App Store", "rating": 5, "title": "Fast and reliable payments", "text": "Transfers are instant and the confirmation notifications come through right away, works great."}, {"date": "2026-07-04", "platform": "Play Store", "rating": 5, "title": "Smooth identity check", "text": "The live selfie check worked perfectly on the first try, nice and smooth process."}, {"date": "2026-07-05", "platform": "App Store", "rating": 1, "title": "Statement download not working", "text": "I can't download my monthly statement as PDF, the export button just spins forever."}, {"date": "2026-07-09", "platform": "Play Store", "rating": 5, "title": "Great payment experience", "text": "Really impressed with how fast bill payments are processed compared to other apps I've used."}, {"date": "2026-07-10", "platform": "Play Store", "rating": 5, "title": "Easy to export statements", "text": "Exporting statements for tax filing was straightforward and the CSV format is well organized."}, {"date": "2026-07-10", "platform": "Play Store", "rating": 2, "title": "Document upload keeps failing", "text": "The document scanner kept rejecting my ID even in good lighting, had to try eight times."}, {"date": "2026-07-11", "platform": "Play Store", "rating": 2, "title": "Document upload keeps failing", "text": "The document scanner kept rejecting my ID even in good lighting, had to try eight times."}, {"date": "2026-07-11", "platform": "Play Store", "rating": 1, "title": "Statement download not working", "text": "I can't download my monthly statement as PDF, the export button just spins forever."}, {"date": "2026-07-12", "platform": "App Store", "rating": 1, "title": "Signup was confusing", "text": "The signup process asked for the same information twice and the app crashed when I tried to upload my ID photo."}, {"date": "2026-07-12", "platform": "Play Store", "rating": 4, "title": "Great first experience", "text": "Setting up my account took less than five minutes, the steps were clear and well explained."}, {"date": "2026-07-12", "platform": "App Store", "rating": 1, "title": "Transaction stuck in pending", "text": "A transaction has been stuck in pending status for two days now, no explanation given."}, {"date": "2026-07-13", "platform": "App Store", "rating": 5, "title": "Great payment experience", "text": "Really impressed with how fast bill payments are processed compared to other apps I've used."}, {"date": "2026-07-13", "platform": "App Store", "rating": 5, "title": "Smooth identity check", "text": "The live selfie check worked perfectly on the first try, nice and smooth process."}, {"date": "2026-07-14", "platform": "App Store", "rating": 2, "title": "High withdrawal fees", "text": "The withdrawal fee is way higher than what was advertised on the pricing page, feels misleading."}, {"date": "2026-07-16", "platform": "App Store", "rating": 5, "title": "Verified in minutes", "text": "Identity verification was surprisingly quick, uploaded my documents and got approved within an hour."}, {"date": "2026-07-16", "platform": "App Store", "rating": 5, "title": "Smooth identity check", "text": "The live selfie check worked perfectly on the first try, nice and smooth process."}, {"date": "2026-07-17", "platform": "App Store", "rating": 5, "title": "Quick withdrawal to bank", "text": "Withdrew funds to my bank account and it landed within an hour, better than expected."}, {"date": "2026-07-17", "platform": "App Store", "rating": 4, "title": "Great first experience", "text": "Setting up my account took less than five minutes, the steps were clear and well explained."}, {"date": "2026-07-17", "platform": "App Store", "rating": 5, "title": "Easy to get started", "text": "Loved how the app walked me through each step with simple tooltips, very beginner friendly."}, {"date": "2026-07-18", "platform": "Play Store", "rating": 5, "title": "Love the instant transfers", "text": "Sending money to friends is so easy now, the whole flow takes less than thirty seconds."}, {"date": "2026-07-18", "platform": "App Store", "rating": 1, "title": "Withdrawal failed silently", "text": "My withdrawal request just disappeared with no error message and no funds in my account."}, {"date": "2026-07-19", "platform": "App Store", "rating": 2, "title": "High withdrawal fees", "text": "The withdrawal fee is way higher than what was advertised on the pricing page, feels misleading."}, {"date": "2026-07-19", "platform": "App Store", "rating": 1, "title": "Statement download not working", "text": "I can't download my monthly statement as PDF, the export button just spins forever."}, {"date": "2026-07-20", "platform": "App Store", "rating": 5, "title": "Nice monthly summary", "text": "The monthly summary view with spending charts is genuinely useful for tracking my budget."}, {"date": "2026-07-22", "platform": "App Store", "rating": 1, "title": "KYC verification stuck", "text": "My KYC has been pending for four days now with no update, support hasn't responded either."}, {"date": "2026-07-22", "platform": "Play Store", "rating": 4, "title": "Great first experience", "text": "Setting up my account took less than five minutes, the steps were clear and well explained."}, {"date": "2026-07-23", "platform": "App Store", "rating": 1, "title": "Transaction stuck in pending", "text": "A transaction has been stuck in pending status for two days now, no explanation given."}, {"date": "2026-07-23", "platform": "App Store", "rating": 1, "title": "KYC rejected with no reason", "text": "My KYC got rejected but the app never explained why, very frustrating experience."}, {"date": "2026-07-24", "platform": "App Store", "rating": 5, "title": "Fast and reliable payments", "text": "Transfers are instant and the confirmation notifications come through right away, works great."}, {"date": "2026-07-25", "platform": "Play Store", "rating": 2, "title": "Waiting days for approval", "text": "Still waiting on KYC approval a week later, can't use half the app features until it clears."}, {"date": "2026-07-25", "platform": "App Store", "rating": 5, "title": "Loved the intro tutorial", "text": "First time using the app and the welcome tutorial made everything click right away."}, {"date": "2026-07-25", "platform": "Play Store", "rating": 2, "title": "Document upload keeps failing", "text": "The document scanner kept rejecting my ID even in good lighting, had to try eight times."}, {"date": "2026-07-25", "platform": "Play Store", "rating": 1, "title": "Signup was confusing", "text": "The signup process asked for the same information twice and the app crashed when I tried to upload my ID photo."}, {"date": "2026-07-26", "platform": "Play Store", "rating": 1, "title": "KYC verification stuck", "text": "My KYC has been pending for four days now with no update, support hasn't responded either."}, {"date": "2026-07-26", "platform": "Play Store", "rating": 1, "title": "KYC rejected with no reason", "text": "My KYC got rejected but the app never explained why, very frustrating experience."}, {"date": "2026-07-27", "platform": "App Store", "rating": 1, "title": "Transaction stuck in pending", "text": "A transaction has been stuck in pending status for two days now, no explanation given."}, {"date": "2026-07-28", "platform": "App Store", "rating": 1, "title": "Statement download not working", "text": "I can't download my monthly statement as PDF, the export button just spins forever."}, {"date": "2026-07-28", "platform": "Play Store", "rating": 5, "title": "Easy to get started", "text": "Loved how the app walked me through each step with simple tooltips, very beginner friendly."}, {"date": "2026-07-28", "platform": "App Store", "rating": 5, "title": "Easy to get started", "text": "Loved how the app walked me through each step with simple tooltips, very beginner friendly."}, {"date": "2026-07-28", "platform": "Play Store", "rating": 5, "title": "Quick withdrawal to bank", "text": "Withdrew funds to my bank account and it landed within an hour, better than expected."}, {"date": "2026-07-30", "platform": "App Store", "rating": 5, "title": "Quick withdrawal to bank", "text": "Withdrew funds to my bank account and it landed within an hour, better than expected."}, {"date": "2026-08-01", "platform": "Play Store", "rating": 2, "title": "Waiting days for approval", "text": "Still waiting on KYC approval a week later, can't use half the app features until it clears."}, {"date": "2026-08-02", "platform": "App Store", "rating": 1, "title": "Transaction stuck in pending", "text": "A transaction has been stuck in pending status for two days now, no explanation given."}, {"date": "2026-08-02", "platform": "Play Store", "rating": 5, "title": "Fast and reliable payments", "text": "Transfers are instant and the confirmation notifications come through right away, works great."}, {"date": "2026-08-02", "platform": "Play Store", "rating": 2, "title": "High withdrawal fees", "text": "The withdrawal fee is way higher than what was advertised on the pricing page, feels misleading."}, {"date": "2026-08-03", "platform": "App Store", "rating": 4, "title": "Great first experience", "text": "Setting up my account took less than five minutes, the steps were clear and well explained."}, {"date": "2026-08-03", "platform": "Play Store", "rating": 1, "title": "Statement download not working", "text": "I can't download my monthly statement as PDF, the export button just spins forever."}, {"date": "2026-08-04", "platform": "App Store", "rating": 1, "title": "Transaction stuck in pending", "text": "A transaction has been stuck in pending status for two days now, no explanation given."}, {"date": "2026-08-04", "platform": "App Store", "rating": 1, "title": "Transaction stuck in pending", "text": "A transaction has been stuck in pending status for two days now, no explanation given."}, {"date": "2026-08-08", "platform": "App Store", "rating": 1, "title": "Signup was confusing", "text": "The signup process asked for the same information twice and the app crashed when I tried to upload my ID photo."}, {"date": "2026-08-08", "platform": "Play Store", "rating": 5, "title": "Great payment experience", "text": "Really impressed with how fast bill payments are processed compared to other apps I've used."}, {"date": "2026-08-08", "platform": "Play Store", "rating": 5, "title": "Quick withdrawal to bank", "text": "Withdrew funds to my bank account and it landed within an hour, better than expected."}, {"date": "2026-08-09", "platform": "App Store", "rating": 1, "title": "Withdrawal pending for days", "text": "Requested a withdrawal five days ago and it's still showing as processing, support says wait 24 more hours."}, {"date": "2026-08-10", "platform": "Play Store", "rating": 1, "title": "Payment failed but money deducted", "text": "My payment failed but the amount was deducted from my account, still waiting for a refund three days later."}, {"date": "2026-08-10", "platform": "App Store", "rating": 1, "title": "Transaction stuck in pending", "text": "A transaction has been stuck in pending status for two days now, no explanation given."}, {"date": "2026-08-11", "platform": "Play Store", "rating": 1, "title": "Withdrawal pending for days", "text": "Requested a withdrawal five days ago and it's still showing as processing, support says wait 24 more hours."}, {"date": "2026-08-12", "platform": "App Store", "rating": 1, "title": "Transaction stuck in pending", "text": "A transaction has been stuck in pending status for two days now, no explanation given."}, {"date": "2026-08-12", "platform": "App Store", "rating": 2, "title": "Statement takes forever to load", "text": "Statements take almost a minute to load every time, feels like it's fetching from scratch."}, {"date": "2026-08-14", "platform": "App Store", "rating": 5, "title": "Love the instant transfers", "text": "Sending money to friends is so easy now, the whole flow takes less than thirty seconds."}, {"date": "2026-08-15", "platform": "Play Store", "rating": 2, "title": "Document upload keeps failing", "text": "The document scanner kept rejecting my ID even in good lighting, had to try eight times."}, {"date": "2026-08-16", "platform": "Play Store", "rating": 1, "title": "KYC rejected with no reason", "text": "My KYC got rejected but the app never explained why, very frustrating experience."}, {"date": "2026-08-18", "platform": "Play Store", "rating": 5, "title": "Smooth identity check", "text": "The live selfie check worked perfectly on the first try, nice and smooth process."}, {"date": "2026-08-18", "platform": "Play Store", "rating": 2, "title": "Missing transactions in statement", "text": "Several transactions from last month are missing from my statement, had to check my bank separately."}, {"date": "2026-08-21", "platform": "App Store", "rating": 5, "title": "Great payment experience", "text": "Really impressed with how fast bill payments are processed compared to other apps I've used."}, {"date": "2026-08-22", "platform": "App Store", "rating": 1, "title": "KYC verification stuck", "text": "My KYC has been pending for four days now with no update, support hasn't responded either."}, {"date": "2026-08-23", "platform": "Play Store", "rating": 2, "title": "Waiting days for approval", "text": "Still waiting on KYC approval a week later, can't use half the app features until it clears."}, {"date": "2026-08-23", "platform": "App Store", "rating": 2, "title": "UPI keeps timing out", "text": "UPI payments keep timing out during peak hours, tried four times before it finally went through."}, {"date": "2026-08-23", "platform": "Play Store", "rating": 5, "title": "Easy to get started", "text": "Loved how the app walked me through each step with simple tooltips, very beginner friendly."}, {"date": "2026-08-23", "platform": "App Store", "rating": 2, "title": "Stuck on account setup", "text": "I got stuck on the phone number verification screen for almost 20 minutes, had to restart the app twice."}, {"date": "2026-08-24", "platform": "Play Store", "rating": 5, "title": "Nice monthly summary", "text": "The monthly summary view with spending charts is genuinely useful for tracking my budget."}, {"date": "2026-08-25", "platform": "App Store", "rating": 5, "title": "Loved the intro tutorial", "text": "First time using the app and the welcome tutorial made everything click right away."}, {"date": "2026-08-26", "platform": "Play Store", "rating": 1, "title": "Payment failed but money deducted", "text": "My payment failed but the amount was deducted from my account, still waiting for a refund three days later."}, {"date": "2026-08-26", "platform": "App Store", "rating": 1, "title": "Withdrawal pending for days", "text": "Requested a withdrawal five days ago and it's still showing as processing, support says wait 24 more hours."}, {"date": "2026-08-28", "platform": "App Store", "rating": 2, "title": "Withdrawal limit too low", "text": "The daily withdrawal limit is too restrictive for anyone trying to move a larger amount at once."}, {"date": "2026-08-28", "platform": "App Store", "rating": 4, "title": "Smooth cash out process", "text": "Cashing out was simple and the funds cleared overnight, no complaints here."}, {"date": "2026-08-30", "platform": "App Store", "rating": 5, "title": "Quick withdrawal to bank", "text": "Withdrew funds to my bank account and it landed within an hour, better than expected."}, {"date": "2026-08-31", "platform": "Play Store", "rating": 2, "title": "Waiting days for approval", "text": "Still waiting on KYC approval a week later, can't use half the app features until it clears."}, {"date": "2026-09-01", "platform": "Play Store", "rating": 1, "title": "Withdrawal pending for days", "text": "Requested a withdrawal five days ago and it's still showing as processing, support says wait 24 more hours."}, {"date": "2026-09-01", "platform": "App Store", "rating": 4, "title": "Smooth cash out process", "text": "Cashing out was simple and the funds cleared overnight, no complaints here."}, {"date": "2026-09-01", "platform": "App Store", "rating": 5, "title": "Quick withdrawal to bank", "text": "Withdrew funds to my bank account and it landed within an hour, better than expected."}, {"date": "2026-09-02", "platform": "Play Store", "rating": 4, "title": "Smooth cash out process", "text": "Cashing out was simple and the funds cleared overnight, no complaints here."}, {"date": "2026-09-02", "platform": "Play Store", "rating": 5, "title": "Easy to export statements", "text": "Exporting statements for tax filing was straightforward and the CSV format is well organized."}, {"date": "2026-09-02", "platform": "Play Store", "rating": 2, "title": "High withdrawal fees", "text": "The withdrawal fee is way higher than what was advertised on the pricing page, feels misleading."}, {"date": "2026-09-06", "platform": "App Store", "rating": 4, "title": "Smooth cash out process", "text": "Cashing out was simple and the funds cleared overnight, no complaints here."}, {"date": "2026-09-07", "platform": "App Store", "rating": 5, "title": "Easy to get started", "text": "Loved how the app walked me through each step with simple tooltips, very beginner friendly."}, {"date": "2026-09-08", "platform": "Play Store", "rating": 2, "title": "Stuck on account setup", "text": "I got stuck on the phone number verification screen for almost 20 minutes, had to restart the app twice."}, {"date": "2026-09-08", "platform": "Play Store", "rating": 1, "title": "Transaction stuck in pending", "text": "A transaction has been stuck in pending status for two days now, no explanation given."}, {"date": "2026-09-09", "platform": "App Store", "rating": 2, "title": "Withdrawal limit too low", "text": "The daily withdrawal limit is too restrictive for anyone trying to move a larger amount at once."}, {"date": "2026-09-10", "platform": "Play Store", "rating": 2, "title": "Onboarding flow needs work", "text": "The onboarding forms are way too long, I gave up after the third screen asking for personal details."}, {"date": "2026-09-10", "platform": "App Store", "rating": 2, "title": "Missing transactions in statement", "text": "Several transactions from last month are missing from my statement, had to check my bank separately."}, {"date": "2026-09-10", "platform": "Play Store", "rating": 2, "title": "Missing transactions in statement", "text": "Several transactions from last month are missing from my statement, had to check my bank separately."}, {"date": "2026-09-10", "platform": "Play Store", "rating": 5, "title": "Fast and reliable payments", "text": "Transfers are instant and the confirmation notifications come through right away, works great."}, {"date": "2026-09-11", "platform": "Play Store", "rating": 2, "title": "Missing transactions in statement", "text": "Several transactions from last month are missing from my statement, had to check my bank separately."}, {"date": "2026-09-11", "platform": "Play Store", "rating": 4, "title": "Clean statement layout", "text": "The new statement layout is clean and easy to read, categorization of expenses is a nice touch."}, {"date": "2026-09-12", "platform": "Play Store", "rating": 1, "title": "KYC verification stuck", "text": "My KYC has been pending for four days now with no update, support hasn't responded either."}, {"date": "2026-09-13", "platform": "App Store", "rating": 5, "title": "Love the instant transfers", "text": "Sending money to friends is so easy now, the whole flow takes less than thirty seconds."}];
+
+const THEMES = {
+  Onboarding: { color:'#2F6F9E', keywords:['signup','sign up','onboard','account setup','tutorial','verification screen','phone number verification','welcome','first time','getting started'] },
+  KYC: { color:'#7C5CAD', keywords:['kyc','identity','document','id photo','selfie','verification pending','verified','approval'] },
+  Payments: { color:'#B98A2E', keywords:['payment','transfer','upi','transaction','pending status','bill pay','deducted','refund'] },
+  Statements: { color:'#3F8677', keywords:['statement','export','pdf','csv format','transaction history','monthly summary'] },
+  Withdrawals: { color:'#AA3A2C', keywords:['withdraw','cash out','payout','withdrawal limit','withdrawal fee'] },
+};
+
+let reviews = [];
+let lastNote = null;
+
+function classify(review) {
+  const t = (review.title + ' ' + review.text).toLowerCase();
+  let best = null, bestScore = 0;
+  for (const [name, def] of Object.entries(THEMES)) {
+    let score = 0;
+    for (const kw of def.keywords) if (t.includes(kw)) score++;
+    if (score > bestScore) { bestScore = score; best = name; }
+  }
+  return best || 'Other';
+}
+
+// Splits one CSV line into cells, honoring quoted fields (commas inside
+// quotes, and "" as an escaped quote), regardless of column order.
+function splitCSVLine(line) {
+  const cells = [];
+  let cur = '', inQuotes = false;
+  for (let j = 0; j < line.length; j++) {
+    const c = line[j];
+    if (inQuotes) {
+      if (c === '"') {
+        if (line[j + 1] === '"') { cur += '"'; j++; }
+        else { inQuotes = false; }
+      } else { cur += c; }
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ',') { cells.push(cur); cur = ''; }
+      else cur += c;
+    }
+  }
+  cells.push(cur);
+  return cells;
+}
+
+// Normalizes a date cell to YYYY-MM-DD. Accepts YYYY-MM-DD, MM/DD/YYYY, and
+// DD/MM/YYYY (DD/MM assumed when the first number can't be a month).
+// Returns null if it can't confidently parse the value.
+function normalizeDate(raw) {
+  const s = (raw || '').trim();
+  if (!s) return null;
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (m) {
+    const [, y, mo, d] = m;
+    if (+mo >= 1 && +mo <= 12 && +d >= 1 && +d <= 31) return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;
+    return null;
+  }
+  m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (m) {
+    let [, a, b, y] = m;
+    let mo, d;
+    if (+a > 12) { d = a; mo = b; }        // DD/MM/YYYY
+    else if (+b > 12) { mo = a; d = b; }   // MM/DD/YYYY
+    else { mo = a; d = b; }                // ambiguous — assume MM/DD/YYYY
+    if (+mo >= 1 && +mo <= 12 && +d >= 1 && +d <= 31) return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    return null;
+  }
+  const parsed = new Date(s);
+  if (!isNaN(parsed.getTime())) return parsed.toISOString().slice(0, 10);
+  return null;
+}
+
+// Header-aware CSV parser: finds date/platform/rating/title/text columns by
+// name (case-insensitive, any order, extra columns ignored) rather than
+// assuming a fixed column layout. Returns { rows, errors, skipped }.
+function parseCSV(text) {
+  const cleaned = text.replace(/^\uFEFF/, ''); // strip BOM if present
+  const lines = cleaned.split(/\r?\n/).filter(l => l.trim().length);
+  const errors = [];
+  if (!lines.length) return { rows: [], errors: ['The file is empty.'], skipped: 0 };
+
+  const headerCells = splitCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+  const need = ['date', 'platform', 'rating', 'title', 'text'];
+  const colIndex = {};
+  for (const name of need) colIndex[name] = headerCells.indexOf(name);
+  const missing = need.filter(name => colIndex[name] === -1);
+  if (missing.length) {
+    errors.push(`Missing required column${missing.length > 1 ? 's' : ''}: ${missing.join(', ')}. Expected a header row with: date, platform, rating, title, text.`);
+    return { rows: [], errors, skipped: 0 };
+  }
+
+  const rows = [];
+  let skipped = 0;
+  for (let i = 1; i < lines.length; i++) {
+    const cells = splitCSVLine(lines[i]);
+    const rawDate = (cells[colIndex.date] || '').trim();
+    const platform = (cells[colIndex.platform] || '').trim();
+    const rating = parseInt(cells[colIndex.rating], 10);
+    const title = (cells[colIndex.title] || '').trim();
+    const reviewText = (cells[colIndex.text] || '').trim();
+    const date = normalizeDate(rawDate);
+
+    if (!date || !reviewText || isNaN(rating) || rating < 1 || rating > 5) {
+      skipped++;
+      continue;
+    }
+    rows.push({ date, platform: platform || 'Unknown', rating, title, text: reviewText });
+  }
+  if (!rows.length) errors.push('No valid rows found — check that dates and ratings (1–5) are formatted correctly.');
+  return { rows, errors, skipped };
+}
+
+function loadReviews(data) {
+  reviews = data.map(r => ({ ...r, theme: classify(r) })).sort((a,b) => a.date.localeCompare(b.date));
+  render();
+}
+
+function weekIndexOf(dateStr, startDateStr) {
+  const d = new Date(dateStr), s = new Date(startDateStr);
+  return Math.floor((d - s) / (7*24*3600*1000));
+}
+
+function render() {
+  if (!reviews.length) { document.getElementById('rangeLabel').textContent = 'no data loaded'; return; }
+  const dates = reviews.map(r => r.date).sort();
+  const startDate = dates[0], endDate = dates[dates.length-1];
+  document.getElementById('rangeLabel').textContent = `${startDate} → ${endDate}`;
+  document.getElementById('statTotal').textContent = reviews.length;
+  const nWeeks = weekIndexOf(endDate, startDate) + 1;
+  document.getElementById('statWeeks').textContent = Math.ceil(nWeeks/7) + ' wk';
+
+  const latestDate = new Date(endDate);
+  const weekStart = new Date(latestDate); weekStart.setDate(weekStart.getDate()-6);
+  const weekStartStr = weekStart.toISOString().slice(0,10);
+  const thisWeek = reviews.filter(r => r.date >= weekStartStr);
+  document.getElementById('statLatest').textContent = `${weekStartStr} → ${endDate}`;
+  const avg = thisWeek.length ? (thisWeek.reduce((s,r)=>s+r.rating,0)/thisWeek.length).toFixed(1) : '—';
+  document.getElementById('statAvg').textContent = avg;
+
+  // theme strip with 12-bucket sparkline
+  const strip = document.getElementById('themesStrip');
+  strip.innerHTML = '';
+  const totalWeeks = Math.max(1, Math.ceil((new Date(endDate)-new Date(startDate))/(7*24*3600*1000))+1);
+  for (const [name, def] of Object.entries(THEMES)) {
+    const themeReviews = reviews.filter(r => r.theme === name);
+    const weekCounts = new Array(totalWeeks).fill(0);
+    themeReviews.forEach(r => { const wk = weekIndexOf(r.date, startDate); if (wk>=0 && wk<totalWeeks) weekCounts[wk]++; });
+    const max = Math.max(1, ...weekCounts);
+    const negCount = themeReviews.filter(r => r.rating <= 2 && r.date >= weekStartStr).length;
+    const thisWeekCount = themeReviews.filter(r => r.date >= weekStartStr).length;
+
+    const card = document.createElement('div');
+    card.className = 'theme-card';
+    card.innerHTML = `
+      <div class="name" style="color:${def.color}">${name}</div>
+      <div class="count">${thisWeekCount}</div>
+      <div class="neg">${negCount ? negCount + ' negative this wk' : 'no complaints this wk'}</div>
+      <div class="spark">${weekCounts.map(c => `<div style="height:${Math.max(8,(c/max)*24)}px; background:${def.color}; opacity:${0.35+0.65*(c/max)}"></div>`).join('')}</div>
+    `;
+    strip.appendChild(card);
+  }
+}
+
+function resetGeneratedState() {
+  document.getElementById('errorBox').textContent = '';
+  document.getElementById('noteArea').innerHTML = '<div class="empty">Click "Generate weekly note" to summarize the latest week.</div>';
+  document.getElementById('emailPanel').style.display = 'none';
+  document.getElementById('emailBox').textContent = '';
+  document.getElementById('emailBtn').disabled = true;
+  lastNote = null;
+}
+
+document.getElementById('fileInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const fileStatus = document.getElementById('fileStatus');
+  const reader = new FileReader();
+  reader.onerror = () => { fileStatus.innerHTML = `<span style="color:var(--alert)">Could not read "${file.name}".</span>`; };
+  reader.onload = (evt) => {
+    const { rows, errors, skipped } = parseCSV(evt.target.result);
+    if (!rows.length) {
+      fileStatus.innerHTML = `<span style="color:var(--alert)">Could not load "${file.name}" — ${errors.join(' ')}</span>`;
+      return; // keep whatever data was loaded before
+    }
+    resetGeneratedState();
+    let msg = `Loaded ${rows.length} reviews from ${file.name}`;
+    if (skipped) msg += ` (${skipped} row${skipped > 1 ? 's' : ''} skipped — bad date or rating)`;
+    fileStatus.innerHTML = skipped
+      ? `<span style="color:var(--amber)">${msg}</span>`
+      : msg;
+    loadReviews(rows);
+  };
+  reader.readAsText(file);
+  e.target.value = ''; // allow re-selecting the same file name after fixing it
+});
+
+document.getElementById('reloadSampleBtn').addEventListener('click', () => {
+  resetGeneratedState();
+  document.getElementById('fileStatus').textContent = 'Using bundled sample data (116 reviews, 12 weeks)';
+  loadReviews(SAMPLE_DATA);
+});
+
+document.getElementById('docsBtn').addEventListener('click', () => {
+  document.getElementById('docsOverlay').style.display = 'block';
+});
+document.getElementById('docsCloseBtn').addEventListener('click', () => {
+  document.getElementById('docsOverlay').style.display = 'none';
+});
+document.getElementById('docsOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'docsOverlay') document.getElementById('docsOverlay').style.display = 'none';
+});
+
+async function callGenerateNote(payload) {
+  // Rule-based, fully client-side — no API key, no billing, no network call.
+  const dates = payload.map(r => r.date).filter(Boolean).sort();
+  const endDate = dates[dates.length - 1] || new Date().toISOString().slice(0,10);
+  const weekStart = new Date(endDate); weekStart.setDate(weekStart.getDate() - 6);
+
+  const byTheme = {};
+  for (const r of payload) {
+    if (!r.theme || r.theme === 'Other') continue;
+    if (!byTheme[r.theme]) byTheme[r.theme] = [];
+    byTheme[r.theme].push(r);
+  }
+
+  const ranked = Object.entries(byTheme)
+    .map(([name, revs]) => {
+      const negative_count = revs.filter(r => r.rating <= 2).length;
+      return { name, revs, count: revs.length, negative_count, score: revs.length + negative_count * 1.5 };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  const top_themes = ranked.map(t => ({
+    name: t.name,
+    count: t.count,
+    negative_count: t.negative_count,
+    summary: `${t.count} review${t.count === 1 ? '' : 's'} this window (${t.negative_count} rated 2★ or below) mention ${t.name.toLowerCase()}.`,
+  }));
+
+  const quotes = ranked.map(t => {
+    const worst = [...t.revs].sort((a, b) => a.rating - b.rating)[0];
+    return { theme: t.name, rating: worst.rating, text: worst.text };
+  });
+
+  const ACTION_TEMPLATES = {
+    Onboarding: 'Add a visible progress indicator and a fallback verification path for signup/OTP so new users don\u2019t get stuck at first run.',
+    KYC: 'Audit the KYC review queue for delay hotspots and add a status/ETA indicator so users know where verification stands.',
+    Payments: 'Surface a status/ETA banner for pending payments and auto-trigger a retry or refund past a set time threshold.',
+    Statements: 'Audit the statement export pipeline for dropped transactions and add a reconciliation check before generating exports.',
+    Withdrawals: 'Review withdrawal limits/fee messaging and add clearer in-app explanations for payout delays.',
+  };
+  const actions = ranked.map(t => ACTION_TEMPLATES[t.name] || `Investigate the top complaints under ${t.name} and prioritize a fix for the most-cited issue.`);
+
+  const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const endDateObj = new Date(endDate);
+  const sameMonth = weekStart.getMonth() === endDateObj.getMonth();
+  const startLabel = `${MONTH_ABBR[weekStart.getMonth()]} ${weekStart.getDate()}`;
+  const endLabel = sameMonth
+    ? `${endDateObj.getDate()}, ${endDateObj.getFullYear()}`
+    : `${MONTH_ABBR[endDateObj.getMonth()]} ${endDateObj.getDate()}, ${endDateObj.getFullYear()}`;
+  const week_range = `${startLabel}\u2013${endLabel}`;
+
+  return { week_range, top_themes, quotes, actions, reviewCount: payload.length };
+}
+
+async function callDraftEmail(note) {
+  // Fully client-side templated draft — no API key, no billing, no network call.
+  const lines = [];
+  lines.push(`Subject: Weekly App Review Pulse \u2014 Week of ${note.week_range}`);
+  lines.push('');
+  lines.push(`Here's this week's app review pulse \u2014 ${note.reviewCount} App Store/Play Store reviews analyzed.`);
+  lines.push('');
+  lines.push('TOP 3 THEMES');
+  note.top_themes.forEach((t, i) => lines.push(`${i + 1}. ${t.name} (${t.count} reviews, ${t.negative_count} negative) \u2014 ${t.summary}`));
+  lines.push('');
+  lines.push('USER QUOTES');
+  note.quotes.forEach(q => lines.push(`- "${q.text}" (${q.theme}, ${q.rating}\u2605)`));
+  lines.push('');
+  lines.push('ACTION IDEAS');
+  note.actions.forEach((a, i) => lines.push(`${i + 1}. ${a}`));
+  lines.push('');
+  lines.push('Generated automatically from public App Store/Play Store review exports. No usernames, emails, or IDs included.');
+  return lines.join('\n');
+}
+
+document.getElementById('generateBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('generateBtn');
+  const errorBox = document.getElementById('errorBox');
+  errorBox.textContent = '';
+  const noteArea = document.getElementById('noteArea');
+  btn.disabled = true;
+  noteArea.innerHTML = '<div class="loading">Analyzing reviews…</div>';
+
+  const dates = reviews.map(r => r.date).sort();
+  const endDate = dates[dates.length-1];
+  const weekStart = new Date(endDate); weekStart.setDate(weekStart.getDate()-6);
+  const weekStartStr = weekStart.toISOString().slice(0,10);
+  const thisWeek = reviews.filter(r => r.date >= weekStartStr);
+
+  const payload = thisWeek.map(r => ({ date: r.date, platform: r.platform, rating: r.rating, theme: r.theme, text: r.text }));
+
+  try {
+    const note = await callGenerateNote(payload);
+    lastNote = note;
+    renderNote(note);
+    document.getElementById('emailBtn').disabled = false;
+  } catch (err) {
+    errorBox.textContent = 'Could not generate note: ' + err.message;
+    noteArea.innerHTML = '<div class="empty">Generation failed — try again. ' +
+      '<button class="btn small" id="retryGenBtn" style="margin-top:10px;">Retry</button></div>';
+    const retry = document.getElementById('retryGenBtn');
+    if (retry) retry.addEventListener('click', () => document.getElementById('generateBtn').click());
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+function renderNote(note) {
+  const wordCount = (
+    note.top_themes.map(t => t.summary).join(' ') + ' ' +
+    note.actions.join(' ')
+  ).split(/\s+/).length;
+
+  const html = `
+    <div class="memo">
+      <h2>Weekly App Review Pulse</h2>
+      <div class="meta">${note.week_range} · App Store + Play Store · ${reviews.filter(r=>true).length ? '' : ''}${document.getElementById('statTotal').textContent} reviews in window</div>
+      <h4>Top 3 Themes</h4>
+      <ol>${note.top_themes.map(t => `<li><b>${t.name}</b> (${t.count} reviews, ${t.negative_count} negative) — ${t.summary}</li>`).join('')}</ol>
+      <h4>Real User Quotes</h4>
+      ${note.quotes.map(q => `<blockquote>"${q.text}"<div class="quote-meta">${q.theme}, ${q.rating}★</div></blockquote>`).join('')}
+      <h4>Three Action Ideas</h4>
+      <ol>${note.actions.map(a => `<li>${a}</li>`).join('')}</ol>
+      <div class="stamp"><span>${wordCount} words</span></div>
+    </div>
+  `;
+  document.getElementById('noteArea').innerHTML = html;
+}
+
+document.getElementById('emailBtn').addEventListener('click', async () => {
+  if (!lastNote) return;
+  const btn = document.getElementById('emailBtn');
+  const errorBox = document.getElementById('errorBox');
+  errorBox.textContent = '';
+  btn.disabled = true;
+  document.getElementById('emailPanel').style.display = 'block';
+  document.getElementById('emailBox').textContent = 'Drafting email…';
+
+  try {
+    const emailText = await callDraftEmail(lastNote);
+    document.getElementById('emailBox').textContent = emailText.trim();
+  } catch (err) {
+    errorBox.textContent = 'Could not draft email: ' + err.message;
+    document.getElementById('emailBox').textContent = 'Draft failed — click "Draft email" to retry.';
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('copyEmailBtn').addEventListener('click', () => {
+  const text = document.getElementById('emailBox').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('copyStatus').textContent = 'Copied ✓';
+    setTimeout(() => document.getElementById('copyStatus').textContent = '', 2000);
+  });
+});
+
+// init
+loadReviews(SAMPLE_DATA);
+</script>
+</body>
+</html>
